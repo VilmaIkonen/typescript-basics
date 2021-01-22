@@ -10,14 +10,14 @@ interface Pet {
 
 interface Dog extends Pet {
   sporty: boolean,
-  bark? (): void
+  bark(): string
 }
 
 let dogArray: Dog[] = [
-  { name: 'RuffRuff', age: 4, weight: 20, microChipped: true, spayedOrNeutered: true, breed: 'labradorian', sporty: true, bark: () => {} },
-  { name: 'Haukku', age: 0, weight: 7, microChipped: true, spayedOrNeutered: false, breed: 'german sheppard', sporty: true, bark: () => {}  },
-  { name: 'Lady', age: 10, weight: 3, microChipped: true, spayedOrNeutered: true, breed: 'chihuahua', sporty: false, bark: () => {}  },
-  { name: 'Nelli', age: 2, weight: 5, microChipped: true, spayedOrNeutered: false, breed: 'russian tsvetnaya bolonka', sporty: false, bark: () => {} }
+  { name: 'RuffRuff', age: 4, weight: 20, microChipped: true, spayedOrNeutered: true, breed: 'labradorian', sporty: true, bark() {return 'wuf'} },
+  { name: 'Haukku', age: 0, weight: 7, microChipped: true, spayedOrNeutered: false, breed: 'german sheppard', sporty: true, bark() {return 'bowwow'} },
+  { name: 'Lady', age: 10, weight: 3, microChipped: true, spayedOrNeutered: true, breed: 'chihuahua', sporty: false, bark() {return 'yapyap'} },
+  { name: 'Nelli', age: 2, weight: 5, microChipped: true, spayedOrNeutered: false, breed: 'russian tsvetnaya bolonka', sporty: false, bark() {return 'wufff'} }
 ]
 
 function adopt(pet: Dog) {
@@ -31,10 +31,7 @@ function adopt(pet: Dog) {
   const sporty: boolean = pet.sporty;
   const bark = pet.bark;
 
-  // const sportyDog = (pet.sporty === true);
-  // const nonSportyDog = (pet.sporty === false);
-
-  console.log(`We adopted ${name}, it is ${age} years old. It is ${sporty ? 'sporty' : 'not sporty'}`);
+  console.log(`We adopted ${name}, it is ${age} years old. It is ${sporty ? 'sporty' : 'not sporty'}. When happy, it says "${bark()}"`);
 }
 
 adopt(dogArray[0]);
@@ -51,16 +48,16 @@ console.log('################')
 // ############### //
 
 interface Cat extends Pet {
-  purr? (): void
+  purr(): string
 }
 
 let catArray: Cat[] = [
-  { name: 'Miisu', age: 7, weight: 4, microChipped: false, spayedOrNeutered: true, breed: 'seroki', purr: () => {console.log('murrr')} },
-  { name: 'Katti', age: 1, weight: 2, microChipped: true, spayedOrNeutered: false, breed: 'persian', purr: () => {console.log('purrr')} },
-  { name: 'Fluffy', age: 2, weight: 5, microChipped: true, spayedOrNeutered: true, breed: 'norwegian forest cat', purr: () => {console.log('kurrr')} },
+  { name: 'Miisu', age: 7, weight: 4, microChipped: false, spayedOrNeutered: true, breed: 'seroki', purr() {return 'hurrrr'} },
+  { name: 'Katti', age: 1, weight: 2, microChipped: true, spayedOrNeutered: false, breed: 'persian', purr() {return 'purrrr'} },
+  { name: 'Fluffy', age: 2, weight: 5, microChipped: true, spayedOrNeutered: true, breed: 'norwegian forest cat', purr() {return 'kurrrr'} },
 ]
 
-console.log(catArray);
+console.log(catArray[0].purr());
 
 console.log('################')
 // ############### //
@@ -85,7 +82,7 @@ function adoptCatOrDog(animal: Pets) {
   const sporty: boolean = animal.sporty;
   const bark = animal.bark;
   const purr = animal.purr
-
+  
   console.log(`We adopted ${name}, it is ${age} years old.`);
 }
 

@@ -6,10 +6,10 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 var dogArray = [
-    { name: 'RuffRuff', age: 4, weight: 20, microChipped: true, spayedOrNeutered: true, breed: 'labradorian', sporty: true, bark: function () { } },
-    { name: 'Haukku', age: 0, weight: 7, microChipped: true, spayedOrNeutered: false, breed: 'german sheppard', sporty: true, bark: function () { } },
-    { name: 'Lady', age: 10, weight: 3, microChipped: true, spayedOrNeutered: true, breed: 'chihuahua', sporty: false, bark: function () { } },
-    { name: 'Nelli', age: 2, weight: 5, microChipped: true, spayedOrNeutered: false, breed: 'russian tsvetnaya bolonka', sporty: false, bark: function () { } }
+    { name: 'RuffRuff', age: 4, weight: 20, microChipped: true, spayedOrNeutered: true, breed: 'labradorian', sporty: true, bark: function () { return 'wuf'; } },
+    { name: 'Haukku', age: 0, weight: 7, microChipped: true, spayedOrNeutered: false, breed: 'german sheppard', sporty: true, bark: function () { return 'bowwow'; } },
+    { name: 'Lady', age: 10, weight: 3, microChipped: true, spayedOrNeutered: true, breed: 'chihuahua', sporty: false, bark: function () { return 'yapyap'; } },
+    { name: 'Nelli', age: 2, weight: 5, microChipped: true, spayedOrNeutered: false, breed: 'russian tsvetnaya bolonka', sporty: false, bark: function () { return 'wufff'; } }
 ];
 function adopt(pet) {
     var name = pet.name;
@@ -21,9 +21,7 @@ function adopt(pet) {
     var breed = pet.breed;
     var sporty = pet.sporty;
     var bark = pet.bark;
-    // const sportyDog = (pet.sporty === true);
-    // const nonSportyDog = (pet.sporty === false);
-    console.log("We adopted " + name + ", it is " + age + " years old. It is " + (sporty ? 'sporty' : 'not sporty'));
+    console.log("We adopted " + name + ", it is " + age + " years old. It is " + (sporty ? 'sporty' : 'not sporty') + ". When happy, it says \"" + bark() + "\"");
 }
 adopt(dogArray[0]);
 adopt(dogArray[2]);
@@ -34,11 +32,11 @@ dogArray.forEach(function (dog) {
 });
 console.log('################');
 var catArray = [
-    { name: 'Miisu', age: 7, weight: 4, microChipped: false, spayedOrNeutered: true, breed: 'seroki', purr: function () { console.log('murrr'); } },
-    { name: 'Katti', age: 1, weight: 2, microChipped: true, spayedOrNeutered: false, breed: 'persian', purr: function () { console.log('purrr'); } },
-    { name: 'Fluffy', age: 2, weight: 5, microChipped: true, spayedOrNeutered: true, breed: 'norwegian forest cat', purr: function () { console.log('kurrr'); } },
+    { name: 'Miisu', age: 7, weight: 4, microChipped: false, spayedOrNeutered: true, breed: 'seroki', purr: function () { return 'hurrrr'; } },
+    { name: 'Katti', age: 1, weight: 2, microChipped: true, spayedOrNeutered: false, breed: 'persian', purr: function () { return 'purrrr'; } },
+    { name: 'Fluffy', age: 2, weight: 5, microChipped: true, spayedOrNeutered: true, breed: 'norwegian forest cat', purr: function () { return 'kurrrr'; } },
 ];
-console.log(catArray);
+console.log(catArray[0].purr());
 console.log('################');
 var petArray = __spreadArrays(dogArray, catArray);
 console.log(petArray);
