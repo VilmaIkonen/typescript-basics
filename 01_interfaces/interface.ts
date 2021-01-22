@@ -31,17 +31,20 @@ function adopt(pet: Dog) {
   const sporty: boolean = pet.sporty;
   const bark = pet.bark;
 
-  console.log(`We adopted ${name}, it is ${age} years old.`);
+  // const sportyDog = (pet.sporty === true);
+  // const nonSportyDog = (pet.sporty === false);
+
+  console.log(`We adopted ${name}, it is ${age} years old. It is ${sporty ? 'sporty' : 'not sporty'}`);
 }
 
 adopt(dogArray[0]);
-adopt(dogArray[1]);
+adopt(dogArray[2]);
 
 console.log('################')
 // ############### //
 
 dogArray.forEach((dog) => {
-  console.log(`We adopted ${dog.name}, it is ${dog.age} years old.`);
+  console.log(`We adopted ${dog.name}, it is ${dog.age} years old. It is ${dog.sporty ? 'sporty' : 'not sporty'}`);
 })
 
 console.log('################')
