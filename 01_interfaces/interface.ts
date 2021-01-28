@@ -65,10 +65,12 @@ const isCat = (petArray: Cat | Dog): boolean => Boolean((petArray as Cat).type =
 
 petArray.forEach((pet) => {
   if(isDog(pet)) {
-    console.log(`We adopted ${name}, it is ${age} years old. It is ${sporty ? 'sporty' : 'not sporty'}. When happy, it says "${bark()}"`)
+    const dog = pet as Dog;
+    console.log(`We adopted ${dog.name}, it is ${dog.age} years old. It is ${dog.sporty ? 'sporty' : 'not sporty'}. When happy, it says ${dog.bark()}`)
   }
   else {
-    console.log(`We adopted ${name} and when I pet it, it says ${purr()}`)
+    const cat = pet as Cat;
+    console.log(`We adopted ${cat.name} and when I pet it, it says ${cat.purr()}`)
   }
 })
 
