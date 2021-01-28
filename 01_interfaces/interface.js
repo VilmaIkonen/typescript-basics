@@ -1,59 +1,35 @@
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
-var dogArray = [
-    { name: 'RuffRuff', age: 4, weight: 20, microChipped: true, spayedOrNeutered: true, breed: 'labradorian', sporty: true, bark: function () { return 'wuf'; } },
-    { name: 'Haukku', age: 0, weight: 7, microChipped: true, spayedOrNeutered: false, breed: 'german sheppard', sporty: true, bark: function () { return 'bowwow'; } },
-    { name: 'Lady', age: 10, weight: 3, microChipped: true, spayedOrNeutered: true, breed: 'chihuahua', sporty: false, bark: function () { return 'yapyap'; } },
-    { name: 'Nelli', age: 2, weight: 5, microChipped: true, spayedOrNeutered: false, breed: 'russian tsvetnaya bolonka', sporty: false, bark: function () { return 'wufff'; } }
+let dogArray = [
+    { type: 'dog', name: 'RuffRuff', age: 4, weight: 20, microChipped: true, spayedOrNeutered: true, breed: 'labradorian', sporty: true, bark() { return 'wuf'; } },
+    { type: 'dog', name: 'Haukku', age: 0, weight: 7, microChipped: true, spayedOrNeutered: false, breed: 'german sheppard', sporty: true, bark() { return 'bowwow'; } },
+    { type: 'dog', name: 'Lady', age: 10, weight: 3, microChipped: true, spayedOrNeutered: true, breed: 'chihuahua', sporty: false, bark() { return 'yapyap'; } },
+    { type: 'dog', name: 'Nelli', age: 2, weight: 5, microChipped: true, spayedOrNeutered: false, breed: 'russian tsvetnaya bolonka', sporty: false, bark() { return 'wufff'; } }
 ];
-function adopt(pet) {
-    var name = pet.name;
-    var age = pet.age;
-    var weight = pet.weight;
-    var height = pet.height;
-    var microChipped = pet.microChipped;
-    var spayedOrNeutered = pet.spayedOrNeutered;
-    var breed = pet.breed;
-    var sporty = pet.sporty;
-    var bark = pet.bark;
-    console.log("We adopted " + name + ", it is " + age + " years old. It is " + (sporty ? 'sporty' : 'not sporty') + ". When happy, it says \"" + bark() + "\"");
-}
+const adopt = (subject) => {
+    console.log(`We adopted ${subject.name}, it is ${subject.age} years old. It is ${subject.sporty ? 'sporty' : 'not sporty'}. When happy, it says "${subject.bark()}"`);
+};
 adopt(dogArray[0]);
 adopt(dogArray[2]);
 console.log('################');
 // ############### //
-dogArray.forEach(function (dog) {
-    console.log("We adopted " + dog.name + ", it is " + dog.age + " years old. It is " + (dog.sporty ? 'sporty' : 'not sporty'));
-});
+dogArray.forEach(adopt);
 console.log('################');
-var catArray = [
-    { name: 'Miisu', age: 7, weight: 4, microChipped: false, spayedOrNeutered: true, breed: 'seroki', purr: function () { return 'hurrrr'; } },
-    { name: 'Katti', age: 1, weight: 2, microChipped: true, spayedOrNeutered: false, breed: 'persian', purr: function () { return 'purrrr'; } },
-    { name: 'Fluffy', age: 2, weight: 5, microChipped: true, spayedOrNeutered: true, breed: 'norwegian forest cat', purr: function () { return 'kurrrr'; } },
+let catArray = [
+    { type: 'cat', name: 'Miisu', age: 7, weight: 4, microChipped: false, spayedOrNeutered: true, breed: 'seroki', purr() { return 'hurrrr'; } },
+    { type: 'cat', name: 'Katti', age: 1, weight: 2, microChipped: true, spayedOrNeutered: false, breed: 'persian', purr() { return 'purrrr'; } },
+    { type: 'cat', name: 'Fluffy', age: 2, weight: 5, microChipped: true, spayedOrNeutered: true, breed: 'norwegian forest cat', purr() { return 'kurrrr'; } },
 ];
 console.log(catArray[0].purr());
 console.log('################');
-var petArray = __spreadArrays(dogArray, catArray);
+let petArray = [...dogArray, ...catArray];
+// let petArray: Array<Dog | Cat> = [...dogArray, ...catArray];
 console.log(petArray);
-console.log('################');
-// ############### //
-function adoptCatOrDog(animal) {
-    var name = animal.name;
-    var age = animal.age;
-    var weight = animal.weight;
-    var height = animal.height;
-    var microChipped = animal.microChipped;
-    var spayedOrNeutered = animal.spayedOrNeutered;
-    var breed = animal.breed;
-    var sporty = animal.sporty;
-    var bark = animal.bark;
-    var purr = animal.purr;
-    console.log("We adopted " + name + ", it is " + age + " years old.");
-}
-adoptCatOrDog(petArray[0]);
-adoptCatOrDog(petArray[6]);
+const isDog = (petArray) => Boolean(petArray.type === 'dog');
+const isCat = (petArray) => Boolean(petArray.type === 'cat');
+petArray.forEach((pet) => {
+    if (isDog(pet)) {
+        console.log(`We adopted ${name}, it is ${age} years old. It is ${sporty ? 'sporty' : 'not sporty'}. When happy, it says "${bark()}"`);
+    }
+    else {
+        console.log(`We adopted ${name} and when I pet it, it says ${purr()}`);
+    }
+});
