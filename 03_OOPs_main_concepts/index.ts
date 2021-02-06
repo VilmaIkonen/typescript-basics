@@ -148,3 +148,39 @@ harry3.age = -100;
 console.log(harry3.age) // --> 17, new age will not be set as the condition is not fulfilled
 harry3.age =18;
 console.log(harry3.age) // --> 18, new age is set as the condition is fulfilled
+
+// ************ Abstract class ****************** //
+// Abstract class is incomplete, created to be completed by other classes. Abstract class can define which properties or methods the subclass should have.
+
+abstract class AbstractHuman { 
+  constructor(
+    private _name: string,
+    private _age: number
+  ) {}
+
+  get name() {
+    return this._name;
+  }
+
+  get age() {
+    return this._age;
+  }
+
+  abstract address: string;
+  abstract move(): void // abstract class can have abstract methods or properties. Note the syntax in method: This is incorrect 'abstract move:() => void'
+}
+
+class ActualHuman extends AbstractHuman {
+
+  address: string = '';
+
+  constructor(name: string, age: number) {
+    super(name, age);
+  }
+
+  move() {
+    console.log('I am moving')
+  }
+}
+
+const newHuman = new ActualHuman('Harry', 89);
