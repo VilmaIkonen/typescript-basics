@@ -76,7 +76,7 @@ class D extends C {
 // ************ getters, setters ****************** //
 
 class Human {
-  private _name: string // Private field names have _undescore infront of the name (ts convention)
+  private _name: string // Private field names have _undescore infront of the name if they are to be used in getters/setters (ts convention)
   private _age: number
 
   constructor(name: string, age: number) {
@@ -107,7 +107,7 @@ const harry2 = new Human('harry2', 17);
 console.log(harry2.getName()) // --> 
 
 harry2.setAge(-100);
-console.log(harry2.getAge()) // --> 17, new age will not be set as the condition is not fulfilled
+console.log(harry2.getAge() // --> 17, new age will not be set as the condition is not fulfilled
 harry2.setAge(18);
 console.log(harry2.getAge()) // --> 18, new age is set as the condition is fulfilled
 
@@ -167,6 +167,7 @@ abstract class AbstractHuman {
   }
 
   abstract address: string;
+  
   abstract move(): void // abstract class can have abstract methods or properties. Note the syntax in method: This is incorrect 'abstract move:() => void'
 }
 
