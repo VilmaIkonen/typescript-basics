@@ -91,9 +91,7 @@
   "exclude": [
     "node_modules", 
     "**/type.*.ts", 
-    "**/function.*.ts", 
-    "classes/*", 
-    "interfaces/*", 
-    "OOPs_main_concepts/*"
+    "**/function.*.ts",
+    "**/classes.*.ts",
   ]
 }
