@@ -1,6 +1,6 @@
 class Department {
 
-  protected employees: string[] = [] // 'proteted': available in base and inheriting classes. 'Private' onl available in the class where declared
+  protected employees: string[] = [] // 'protected': available in base and inheriting classes. 'Private' onl available in the class where declared
   constructor(private readonly id: string, public name: string) {}
 
   describe(this: Department) {
