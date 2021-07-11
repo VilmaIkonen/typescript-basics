@@ -93,5 +93,6 @@
     "**/type.*.ts", 
     "**/function.*.ts",
     "**/classes.*.ts",
+    "**/interfaces.*.ts"
   ]
 }
