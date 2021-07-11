@@ -1,9 +1,21 @@
-// Interface descripes structure of an object (only name of the type)
+// Defining function type. Can be done also with interface:
+// type AddFunction = (a: number, b: number) => number
+
+interface AddFunction {
+  (a: number, b: number): number
+}
+
+let add: AddFunction
+
+add = (n1: number, n2: number) => {
+  return n1 + n2
+}
+
 interface Named {
 	readonly name: string
 }
 
-interface Greetable extends Named { // Could also inherit more interfaces unlike classes
+interface Greetable extends Named { 
 	greet(phrase: string): void
 }
 
@@ -12,21 +24,18 @@ interface DefineAge {
 	printAge(phrase: string): void
 }
 
-// Class can implement several interfaces (but can only extend on class)
 class Person implements Greetable, DefineAge {
 	name: string
 	age: number
 	city = 'Helsinki'
 
-	// properties from interfaces:
 	constructor(n: string, a: number) {
 		this.name = n
 		this.age = a
 	}
 
-	// methods from interfaces:
 	greet(phrase: string) {
-		console.log(phrase + ' ' + this.name)  // return nothing as method type = void
+		console.log(phrase + ' ' + this.name) 
 	}
 
 	printAge(phrase: string) {
