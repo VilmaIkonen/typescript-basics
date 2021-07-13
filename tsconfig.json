@@ -94,6 +94,7 @@
     "**/function.*.ts",
     "**/classes.*.ts",
     "**/interfaces.*.ts",
-    "**/advancedTypes.*.ts"
+    "**/advancedTypes.*.ts",
+    "**/generics.*.ts"
   ]
 }
