@@ -96,6 +96,7 @@
     "**/interfaces.*.ts",
     "**/advancedTypes.*.ts",
     "**/generics.*.ts",
-    "**/decorators.*.ts"
+    "**/decorators.*.ts",
+    "**/dragAndDropList.ts"
   ]
 }
