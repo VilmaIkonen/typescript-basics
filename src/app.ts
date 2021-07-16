@@ -1,5 +1,47 @@
 // This demo app will be later split into multiple files
 
+//  **** Start 'ProjectState' class: manages app state and listens to changes (in similar way as in React) **** 
+class ProjectState {
+  private listeners: any[] = [] // array of function references. Whenever something changes, eg. in addProject, all listenerFunctions are called
+  private projects: any[] = []
+  private static instance: ProjectState
+
+  // singleton class (a class that can have only one object (an instance of the class) at a time)
+  private constructor() {}
+
+  static getInstance() {
+    if(this.instance) {
+      return this.instance
+    } else {
+      this.instance = new ProjectState()
+      return this.instance
+    }
+  }
+
+  addListener(listenerFunction: Function) {
+    this.listeners.push(listenerFunction)
+  }
+
+  // add project on button click
+  addProject(title: string, desc: string, numOfPeople: number) {
+    const newProject = {
+      id: Math.random().toString(), // Ok for demo purposes
+      title: title,
+      desc: desc,
+      people: numOfPeople
+    }
+    this.projects.push(newProject)
+    // calling listener functions:
+    for(const listenerFunction of this.listeners) {
+      listenerFunction(this.projects.slice()) // .slice() --> use only copy of the array!
+    }
+  }
+}
+
+//  **** End 'ProjectState' class ****
+
+const projectState = ProjectState.getInstance() // globally available, guaranteed to have only one object of this type in whole application 
+
 // **** Start Validator: ****
 interface Validatable { // Definition for validatable object and it's properties:
   value: string | number
@@ -58,19 +100,37 @@ class ProjectList {
   templateElement: HTMLTemplateElement
   hostElement: HTMLDivElement
   element: HTMLElement // element that will be rendered
+  registeredProjects: any[]
 
   // Access to <template> (holds the content) and <div id='app'> (holds reference to element where template content will be rendered)
   constructor(private type: 'active' | 'finished') {
     this.templateElement = document.getElementById('project-list')! as HTMLTemplateElement
     this.hostElement = document.getElementById('app')! as HTMLDivElement
+    this.registeredProjects = []
     
     // Contains pointer to template element .content (reference to code between 'template' tags). 'True' --> deepclone, ie all levels of nesting in template included
     const importedHTMLContent = document.importNode(this.templateElement.content, true)
     this.element = importedHTMLContent.firstElementChild as HTMLElement
     this.element.id = `${this.type}`// add ids dynamically for active and finished projects
 
+    // listener function from project global state (state change --> 'projects' overrided to 'registeredProjects'):
+    projectState?.addListener((projects: any[]) => {
+      this.registeredProjects = projects
+      this.renderProjects()
+    })
+
     this.attach()
-    this.renderContent()
+    this.renderContent()    
+  }
+
+  private renderProjects() {
+    const listElement = document.getElementById(`${this.type}-list`)
+    // render all the projects:
+    for(const projectItem of this.registeredProjects) {
+      const listItem = document.createElement('li')
+      listItem.textContent = projectItem.title
+      listElement?.appendChild(listItem)
+    }
   }
 
   private renderContent() {
@@ -89,7 +149,6 @@ class ProjectList {
     this.hostElement.insertAdjacentElement('beforeend', this.element)
   }
 }
-
 //  **** End 'ProjectList' class ****
 
 //  **** Start 'ProjectInput' class: responsible for rendering the form and gathering the user input ****
@@ -162,9 +221,9 @@ class ProjectInput {
     event.preventDefault()
     const userInput = this.gatherUserInput()
 
-    if(Array.isArray(userInput)) { // cannot check if type is 'tuple', check if type is array
+    if(Array.isArray(userInput)) { // not possible to check if type is 'tuple', check if type is array
       const [title, desc, people] = userInput
-      console.log(title, desc, people)
+      projectState?.addProject(title, desc, people) // creating/ adding project based on user input
       this.clearInputs()
     }  
   }  
