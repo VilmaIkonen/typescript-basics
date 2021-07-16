@@ -100,6 +100,29 @@ function AutoBind (_target:any, _methodName: string, descriptor: PropertyDescrip
 }
 // **** End Auto bind decorator **** 
 
+//  **** Start 'Component' class: base class to hold common properties and methods in other classes ****
+
+// generic class, details can be modified in inheriting classes
+class Component<T extends HTMLElement, U extends HTMLElement> {
+  templateElement: HTMLTemplateElement
+  hostElement: T // can be of any HTML elem. type
+  element: U // element that will be rendered, can be of any HTML elem. type
+
+  constructor(templateId: string, hostElementId: string, newElementId?: string) {
+    this.templateElement = document.getElementById(templateId)! as HTMLTemplateElement
+    this.hostElement = document.getElementById(hostElementId)! as T  
+
+    const importedHTMLContent = document.importNode(this.templateElement.content, true)   
+    this.element = importedHTMLContent.firstElementChild as U   
+
+    // as newElementId? is optional, need to check in runtime
+    if(newElementId) {
+      this.element.id = newElementId // add ids dynamically for 'active' and 'finished' projects
+    }    
+  }
+}
+//  **** End 'Component' class ****
+
 //  **** Start 'ProjectList' class: responsible for rendering a list of projects ****
 class ProjectList {
 
