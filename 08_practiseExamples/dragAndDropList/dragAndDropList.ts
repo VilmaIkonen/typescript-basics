@@ -1,9 +1,26 @@
 // This demo app will be later split into multiple files
 
-//  **** Start 'ProjectState' class: manages app state and listens to changes (in similar way as in React) **** 
+//  **** Start 'Project' class: project object structure / custom type **** 
+enum ProjectStatus { Active, Finished }
+
+class Project { 
+
+  constructor(
+    public id: string,
+    public title: string,
+    public desc: string,
+    public people: number,
+    public status: ProjectStatus
+    ) {}
+}
+//  **** End 'Project' class ****
+
+//  **** Start 'ProjectState' class and state management: manages app state and listens to changes (in similar way as in React) **** 
+type Listener = (items: Project[]) => void
+
 class ProjectState {
-  private listeners: any[] = [] // array of function references. Whenever something changes, eg. in addProject, all listenerFunctions are called
-  private projects: any[] = []
+  private listeners: Listener[] = [] // array of function references. Whenever something changes, eg. in addProject, all listenerFunctions are called
+  private projects: Project[] = []
   private static instance: ProjectState
 
   // singleton class (a class that can have only one object (an instance of the class) at a time)
@@ -18,18 +35,13 @@ class ProjectState {
     }
   }
 
-  addListener(listenerFunction: Function) {
+  addListener(listenerFunction: Listener) {
     this.listeners.push(listenerFunction)
   }
 
   // add project on button click
   addProject(title: string, desc: string, numOfPeople: number) {
-    const newProject = {
-      id: Math.random().toString(), // Ok for demo purposes
-      title: title,
-      desc: desc,
-      people: numOfPeople
-    }
+    const newProject = new Project(Math.random().toString(), title, desc,numOfPeople, ProjectStatus.Active)
     this.projects.push(newProject)
     // calling listener functions:
     for(const listenerFunction of this.listeners) {
@@ -37,7 +49,6 @@ class ProjectState {
     }
   }
 }
-
 //  **** End 'ProjectState' class ****
 
 const projectState = ProjectState.getInstance() // globally available, guaranteed to have only one object of this type in whole application 
@@ -89,10 +100,6 @@ function AutoBind (_target:any, _methodName: string, descriptor: PropertyDescrip
 }
 // **** End Auto bind decorator **** 
 
-//  **** Start 'ProjectItem' class: responsible for rendering single items in the project list ****
-
-//  **** End 'ProjectItem' class ****
-
 //  **** Start 'ProjectList' class: responsible for rendering a list of projects ****
 class ProjectList {
 
@@ -100,7 +107,7 @@ class ProjectList {
   templateElement: HTMLTemplateElement
   hostElement: HTMLDivElement
   element: HTMLElement // element that will be rendered
-  registeredProjects: any[]
+  registeredProjects: Project[]
 
   // Access to <template> (holds the content) and <div id='app'> (holds reference to element where template content will be rendered)
   constructor(private type: 'active' | 'finished') {
@@ -114,7 +121,7 @@ class ProjectList {
     this.element.id = `${this.type}`// add ids dynamically for active and finished projects
 
     // listener function from project global state (state change --> 'projects' overrided to 'registeredProjects'):
-    projectState?.addListener((projects: any[]) => {
+    projectState?.addListener((projects: Project[]) => {
       this.registeredProjects = projects
       this.renderProjects()
     })
