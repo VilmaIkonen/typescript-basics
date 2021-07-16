@@ -47,9 +47,55 @@ function AutoBind (_target:any, _methodName: string, descriptor: PropertyDescrip
 }
 // **** End Auto bind decorator **** 
 
-//  **** Start class **** 
+//  **** Start 'ProjectItem' class: responsible for rendering single items in the project list ****
+
+//  **** End 'ProjectItem' class ****
+
+//  **** Start 'ProjectList' class: responsible for rendering a list of projects ****
+class ProjectList {
+
+  // Needed fields:
+  templateElement: HTMLTemplateElement
+  hostElement: HTMLDivElement
+  element: HTMLElement // element that will be rendered
+
+  // Access to <template> (holds the content) and <div id='app'> (holds reference to element where template content will be rendered)
+  constructor(private type: 'active' | 'finished') {
+    this.templateElement = document.getElementById('project-list')! as HTMLTemplateElement
+    this.hostElement = document.getElementById('app')! as HTMLDivElement
+    
+    // Contains pointer to template element .content (reference to code between 'template' tags). 'True' --> deepclone, ie all levels of nesting in template included
+    const importedHTMLContent = document.importNode(this.templateElement.content, true)
+    this.element = importedHTMLContent.firstElementChild as HTMLElement
+    this.element.id = `${this.type}`// add ids dynamically for active and finished projects
+
+    this.attach()
+    this.renderContent()
+  }
+
+  private renderContent() {
+    // ad id to <ul>:
+    const listId = `${this.type}-list`
+    this.element.querySelector('ul')!.id = listId // here 'element' = <section>
+    // set text content for <h2>:
+    const header2 = 'Projects'
+    this.element.querySelector('h2')!.textContent = this.type.toUpperCase() + ' ' + header2.toUpperCase()
+ 
+  }
+
+  // Rendering logic:
+  private attach() {
+    // Insert ('where in DOM', 'what')
+    this.hostElement.insertAdjacentElement('beforeend', this.element)
+  }
+}
+
+//  **** End 'ProjectList' class ****
+
+//  **** Start 'ProjectInput' class: responsible for rendering the form and gathering the user input ****
 class ProjectInput {
 
+  // Needed fields:
   templateElement: HTMLTemplateElement
   hostElement: HTMLDivElement
   element: HTMLFormElement
@@ -135,10 +181,13 @@ class ProjectInput {
 
   // Rendering logic:
   private attach() {
-    // Insert ('where', 'what')
+    // Insert ('where in DOM', 'what')
     this.hostElement.insertAdjacentElement('afterbegin', this.element)
   }
 }
-//  **** End class **** 
+//  **** End 'ProjectInput' class **** 
 
-const projectAppTest = new ProjectInput()
+// Instatiation of classes:
+const projectInput = new ProjectInput()
+const activeProjectList = new ProjectList('active')
+const finishedProjectList = new ProjectList('finished')

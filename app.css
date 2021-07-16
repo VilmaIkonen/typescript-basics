@@ -38,6 +38,7 @@ textarea:focus {
 
 button {
   font: inherit;
+  text-transform: uppercase;
   background: #ff0062;
   border: 1px solid #ff0062;
   cursor: pointer;
@@ -68,11 +69,11 @@ button:active {
   align-items: center;
 }
 
-#finished-projects {
+#finished {
   border-color: #0044ff;
 }
 
-#finished-projects header {
+#finished header {
   background: #0044ff;
 }
 
