@@ -121,8 +121,14 @@ class ProjectList {
     this.element.id = `${this.type}`// add ids dynamically for active and finished projects
 
     // listener function from project global state (state change --> 'projects' overrided to 'registeredProjects'):
-    projectState?.addListener((projects: Project[]) => {
-      this.registeredProjects = projects
+    projectState.addListener((projects: Project[]) => {
+      const relevantProjects = projects.filter(prj => {
+        if(this.type === 'active') {
+         return prj.status === ProjectStatus.Active
+        }
+        return prj.status === ProjectStatus.Finished
+      })
+      this.registeredProjects = relevantProjects
       this.renderProjects()
     })
 
@@ -131,7 +137,8 @@ class ProjectList {
   }
 
   private renderProjects() {
-    const listElement = document.getElementById(`${this.type}-list`)
+    const listElement = document.getElementById(`${this.type}-list`)! as HTMLUListElement
+    listElement.innerHTML = '' // clear list items before rendering to avoid dublicate list items
     // render all the projects:
     for(const projectItem of this.registeredProjects) {
       const listItem = document.createElement('li')
@@ -230,7 +237,7 @@ class ProjectInput {
 
     if(Array.isArray(userInput)) { // not possible to check if type is 'tuple', check if type is array
       const [title, desc, people] = userInput
-      projectState?.addProject(title, desc, people) // creating/ adding project based on user input
+      projectState.addProject(title, desc, people) // creating/ adding project based on user input
       this.clearInputs()
     }  
   }  
