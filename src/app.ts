@@ -15,16 +15,31 @@ class Project {
 }
 //  **** End 'Project' class ****
 
-//  **** Start 'ProjectState' class and state management: manages app state and listens to changes (in similar way as in React) **** 
-type Listener = (items: Project[]) => void
 
-class ProjectState {
-  private listeners: Listener[] = [] // array of function references. Whenever something changes, eg. in addProject, all listenerFunctions are called
+// **** Start base class for all states **** //
+
+type Listener<T> = (items: T[]) => void
+
+class State<T> {
+  protected listeners: Listener<T>[] = [] // array of function references. Whenever something changes, eg. in addProject, all listenerFunctions are called. "protected": can be accessed frominheriting classes unike "private".
+
+  addListener(listenerFunction: Listener<T>) {
+    this.listeners.push(listenerFunction)
+  }
+}
+//  **** End 'State' class ****
+
+//  **** Start 'ProjectState' class and state management: manages app state and listens to changes (in similar way as in React) **** 
+
+class ProjectState extends State<Project>{
+  
   private projects: Project[] = []
   private static instance: ProjectState
 
   // singleton class (a class that can have only one object (an instance of the class) at a time)
-  private constructor() {}
+  private constructor() {
+    super()
+  }
 
   static getInstance() {
     if(this.instance) {
@@ -33,10 +48,6 @@ class ProjectState {
       this.instance = new ProjectState()
       return this.instance
     }
-  }
-
-  addListener(listenerFunction: Listener) {
-    this.listeners.push(listenerFunction)
   }
 
   // add project on button click
@@ -53,7 +64,7 @@ class ProjectState {
 
 const projectState = ProjectState.getInstance() // globally available, guaranteed to have only one object of this type in whole application 
 
-// **** Start Validator: ****
+// **** Start Validator ****
 interface Validatable { // Definition for validatable object and it's properties:
   value: string | number
   required: boolean
@@ -85,7 +96,7 @@ function validate(validatableInput: Validatable) {
 }
 // **** End Validator **** 
 
-// **** Start Auto bind decorator: ****
+// **** Start Auto bind decorator ****
 function AutoBind (_target:any, _methodName: string, descriptor: PropertyDescriptor) {
   
   const originalMethod = descriptor.value // access to original method
@@ -103,12 +114,13 @@ function AutoBind (_target:any, _methodName: string, descriptor: PropertyDescrip
 //  **** Start 'Component' class: base class to hold common properties and methods in other classes ****
 
 // generic class, details can be modified in inheriting classes
-class Component<T extends HTMLElement, U extends HTMLElement> {
+abstract class Component<T extends HTMLElement, U extends HTMLElement> {
   templateElement: HTMLTemplateElement
   hostElement: T // can be of any HTML elem. type
   element: U // element that will be rendered, can be of any HTML elem. type
 
-  constructor(templateId: string, hostElementId: string, newElementId?: string) {
+  constructor(templateId: string, hostElementId: string, 
+    insertAtStart: boolean, newElementId?: string) {
     this.templateElement = document.getElementById(templateId)! as HTMLTemplateElement
     this.hostElement = document.getElementById(hostElementId)! as T  
 
@@ -118,31 +130,34 @@ class Component<T extends HTMLElement, U extends HTMLElement> {
     // as newElementId? is optional, need to check in runtime
     if(newElementId) {
       this.element.id = newElementId // add ids dynamically for 'active' and 'finished' projects
-    }    
+    }
+    
+    this.attach(insertAtStart)
   }
+
+  private attach(insertAtBeginning: boolean) {
+    // Insert ('where in DOM', 'what')
+    this.hostElement.insertAdjacentElement(insertAtBeginning ? 'afterbegin' : 'beforeend', this.element)
+  }
+
+  abstract configure(): void
+  abstract renderContent(): void
 }
 //  **** End 'Component' class ****
 
 //  **** Start 'ProjectList' class: responsible for rendering a list of projects ****
-class ProjectList {
-
-  // Needed fields:
-  templateElement: HTMLTemplateElement
-  hostElement: HTMLDivElement
-  element: HTMLElement // element that will be rendered
+class ProjectList extends Component<HTMLDivElement, HTMLElement> { 
   registeredProjects: Project[]
 
   // Access to <template> (holds the content) and <div id='app'> (holds reference to element where template content will be rendered)
   constructor(private type: 'active' | 'finished') {
-    this.templateElement = document.getElementById('project-list')! as HTMLTemplateElement
-    this.hostElement = document.getElementById('app')! as HTMLDivElement
+    super('project-list', 'app', false, `${type}`)
     this.registeredProjects = []
-    
-    // Contains pointer to template element .content (reference to code between 'template' tags). 'True' --> deepclone, ie all levels of nesting in template included
-    const importedHTMLContent = document.importNode(this.templateElement.content, true)
-    this.element = importedHTMLContent.firstElementChild as HTMLElement
-    this.element.id = `${this.type}`// add ids dynamically for active and finished projects
+    this.configure()
+    this.renderContent()    
+  }
 
+  configure() {
     // listener function from project global state (state change --> 'projects' overrided to 'registeredProjects'):
     projectState.addListener((projects: Project[]) => {
       const relevantProjects = projects.filter(prj => {
@@ -154,9 +169,15 @@ class ProjectList {
       this.registeredProjects = relevantProjects
       this.renderProjects()
     })
+  }
 
-    this.attach()
-    this.renderContent()    
+  renderContent() {
+    // ad id to <ul>:
+    const listId = `${this.type}-list`
+    this.element.querySelector('ul')!.id = listId // here 'element' = <section>
+    // set text content for <h2>:
+    const header2 = 'Projects'
+    this.element.querySelector('h2')!.textContent = this.type.toUpperCase() + ' ' + header2.toUpperCase() 
   }
 
   private renderProjects() {
@@ -169,46 +190,18 @@ class ProjectList {
       listElement?.appendChild(listItem)
     }
   }
-
-  private renderContent() {
-    // ad id to <ul>:
-    const listId = `${this.type}-list`
-    this.element.querySelector('ul')!.id = listId // here 'element' = <section>
-    // set text content for <h2>:
-    const header2 = 'Projects'
-    this.element.querySelector('h2')!.textContent = this.type.toUpperCase() + ' ' + header2.toUpperCase()
- 
-  }
-
-  // Rendering logic:
-  private attach() {
-    // Insert ('where in DOM', 'what')
-    this.hostElement.insertAdjacentElement('beforeend', this.element)
-  }
 }
 //  **** End 'ProjectList' class ****
 
 //  **** Start 'ProjectInput' class: responsible for rendering the form and gathering the user input ****
-class ProjectInput {
-
-  // Needed fields:
-  templateElement: HTMLTemplateElement
-  hostElement: HTMLDivElement
-  element: HTMLFormElement
+class ProjectInput extends Component <HTMLDivElement, HTMLFormElement>{
   titleInputElement: HTMLInputElement
   descInputElement: HTMLInputElement
   peopleInputElement: HTMLInputElement
 
   // DOM selection logic and rough setup in constructor:
   constructor () {
-    // Access to <template> (holds the content) and <div id='app'> (holds reference to element where template content will be rendered)
-    this.templateElement = document.getElementById('project-input')! as HTMLTemplateElement  
-    this.hostElement = document.getElementById('app')! as HTMLDivElement
-
-    // Contains pointer to template element .content (reference to code between 'template' tags). 'True' --> deepclone, ie all levels of nesting in template included
-    const importedHTMLContent = document.importNode(this.templateElement.content, true)
-    this.element = importedHTMLContent.firstElementChild as HTMLFormElement
-    this.element.id = 'user-input' // add id for selected form element
+    super('project-input', 'app', true, 'user-input')
 
     // Access to input elements:
     this.titleInputElement = this.element.querySelector('#title') as HTMLInputElement
@@ -216,8 +209,19 @@ class ProjectInput {
     this.peopleInputElement = this.element.querySelector('#people') as HTMLInputElement
 
     this.configure()
-    this.attach()
   }
+
+  configure() {
+    this.element.addEventListener('submit', this.submitHandler) 
+    /* If not using @AutoBind and when console.log(this)in submitHandler --> 
+    ProjectInput {templateElement: template#project-input, hostElement: div#app, element: form#user-input, titleInputElement: input#title, descInputElement: textarea#description, …}
+    
+    If usign code: this.element.addEventListener('submit', this.submitHandler) --> wrong output and reference --> <form id="user-input">…</form>
+    --> titleInputElement.value will result in reference error
+    */
+  }
+
+  renderContent() {}
 
   // Access to input values + validation
   private gatherUserInput(): [string, string, number] | void { // method returns a tuple with 2 strings and a number or return nothing
@@ -264,22 +268,6 @@ class ProjectInput {
       this.clearInputs()
     }  
   }  
-  
-  private configure() {
-    this.element.addEventListener('submit', this.submitHandler) 
-    /* If not using @AutoBind and when console.log(this)in submitHandler --> 
-    ProjectInput {templateElement: template#project-input, hostElement: div#app, element: form#user-input, titleInputElement: input#title, descInputElement: textarea#description, …}
-    
-    If usign code: this.element.addEventListener('submit', this.submitHandler) --> wrong output and reference --> <form id="user-input">…</form>
-    --> titleInputElement.value will result in reference error
-    */
-  }
-
-  // Rendering logic:
-  private attach() {
-    // Insert ('where in DOM', 'what')
-    this.hostElement.insertAdjacentElement('afterbegin', this.element)
-  }
 }
 //  **** End 'ProjectInput' class **** 
 
